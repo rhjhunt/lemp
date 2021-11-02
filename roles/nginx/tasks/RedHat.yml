@@ -1,0 +1,31 @@
+---
+- name: Install nginx
+  dnf:
+    name: "@nginx:{{ nginx_version | join(' ') }}/common"
+    state: present
+
+- name: Enable nginx
+  systemd:
+    name: nginx
+    enabled: true
+    state: started
+
+- name: Enable firewall rules
+  firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  with_items:
+    - http
+    - https
+
+- name: Copy nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/conf.d/{{ nginx_server_name }}.conf"
+    owner: root
+    group: root
+    mode: '0640'
+    setype: httpd_config_t
+  notify: restart nginx

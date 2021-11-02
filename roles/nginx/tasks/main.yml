@@ -1,0 +1,36 @@
+---
+- name: Create document root
+  file:
+    path: "{{ nginx_document_root }}"
+    state: directory
+    mode: '0755'
+
+- name: Configure SELinux settings
+  block:
+
+    - name: Set the SELinux context on the document root
+      sefcontext:
+        target: "{{ nginx_document_root }}(/.*)?"
+        setype: httpd_sys_rw_content_t
+        state: present
+    
+    - name: Apply SELinux context
+      command: restorecon -irv "{{ nginx_document_root }}"
+
+    - name: Open up permissions on nginx
+      seboolean:
+        name: "{{ item }}"
+        persistent: true
+        state: true
+      with_items:
+        - httpd_unified
+        - nis_enabled
+        - httpd_can_network_relay
+        - httpd_can_network_connect
+        - httpd_can_network_connect_db
+        - httpd_can_sendmail
+
+  when: ansible_selinux is defined and ansible_selinux.status == "enabled"
+
+- name: Import OS dependent tasks
+  include_tasks: "{{ ansible_distribution }}.yml"

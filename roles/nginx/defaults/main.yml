@@ -1,0 +1,14 @@
+---
+_nginx_version:
+  RedHat:
+    - '1.18'
+  CentOS:
+    - '1.18'
+  Fedora:
+    - '1.20'
+
+nginx_version: "{{ (_nginx_version[ansible_distribution] | default([]) ) }}"
+
+nginx_document_root: /srv/nginx
+
+nginx_server_name: "default"

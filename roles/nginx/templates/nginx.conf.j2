@@ -1,0 +1,27 @@
+server {
+    server_name  {{ nginx_server_name }};
+    root         {{ nginx_document_root }};
+    
+    access_log /var/log/nginx/access_{{ nginx_server_name }};
+    error_log /var/log/nginx/error_{{ nginx_server_name }};
+
+    index   index.php;
+
+    location / {
+        try_files    $uri $uri/ /index.php?$args;
+    }
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_index index.php;
+    }
+    error_page 404 /404.html;
+        location = /40x.html {
+    }
+
+    error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+    }
+
+}

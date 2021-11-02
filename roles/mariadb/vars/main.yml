@@ -1,0 +1,12 @@
+---
+# Set mariadb version based on distribution
+_mariadb_version:
+  RedHat:
+    - '10.5'
+  CentOS:
+    - '10.5'
+  Fedora:
+    - '10.5'
+
+# Set default mariadb version
+mariadb_version: "{{ (_mariadb_version[ansible_distribution] | default([]) ) }}"

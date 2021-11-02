@@ -1,0 +1,14 @@
+---
+- name: Prepare
+  hosts: all
+  vars:
+    selinux_packages:
+      - python3-policycoreutils
+      - python3-libselinux
+      - python3
+  tasks:
+
+    - name: Install python selinux modules
+      dnf:
+        name: "{{ packages }}"
+        state: present

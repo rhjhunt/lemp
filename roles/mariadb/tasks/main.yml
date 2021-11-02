@@ -1,0 +1,5 @@
+---
+- name: Install mariadb
+  dnf:
+    name: "@mariadb:{{ mariadb_version | join(' ') }}/server"
+    state: present
